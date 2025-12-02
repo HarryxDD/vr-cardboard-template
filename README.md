@@ -36,7 +36,8 @@ This project excludes large Unity Asset Store packages to keep the repository li
 #### **Photon Unity Networking** (~36 MB)
 - Download from Unity Asset Store: [PUN 2 - FREE](https://assetstore.unity.com/packages/tools/network/pun-2-free-119922)
 - Import into `Assets/Photon/` folder
-- Configure your Photon App ID in `Resources/PhotonServerSettings`
+- Configure your Photon App ID in `Assets\Photon\PhotonUnityNetworking\Resources\PhotonServerSettings.asset`
+  - How to get a Photon App ID: [link](https://doc.photonengine.com/realtime/current/getting-started/obtain-your-app-id)
 
 ### 3. Open the Project
 
