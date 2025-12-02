@@ -2796,6 +2796,7 @@ MonoBehaviour:
   enableChromaticAberration: 0
   chromaticSpread: 0.016
   showDebugInfo: 0
+  staticScene: 1
   updateEveryFrame: 0
   updateInterval: 0.1
   maxRayBounces: 10
@@ -8671,6 +8672,7 @@ MonoBehaviour:
   enableChromaticAberration: 1
   chromaticSpread: 0.14
   showDebugInfo: 0
+  staticScene: 1
   updateEveryFrame: 0
   updateInterval: 0.1
   maxRayBounces: 10
@@ -11408,6 +11410,7 @@ MonoBehaviour:
   enableChromaticAberration: 0
   chromaticSpread: 0.016
   showDebugInfo: 0
+  staticScene: 1
   updateEveryFrame: 0
   updateInterval: 0.1
   maxRayBounces: 10
@@ -11550,6 +11553,52 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1649738127}
   m_Mesh: {fileID: 4300000, guid: 60694673404b80d45920d4cb862f845a, type: 3}
+--- !u!1 &1651123487
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1651123489}
+  - component: {fileID: 1651123488}
+  m_Layer: 0
+  m_Name: _Network
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1651123488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651123487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daa809a83c6abbc4193c5d9bad3c9a34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetBootstrap
+  gameVersion: 0.1
+  headAvatarPrefab: {fileID: 1732727321232566960, guid: d50f1e4cf2321d34f87a899b7ab3fee2, type: 3}
+--- !u!4 &1651123489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651123487}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.99455, y: -2.45361, z: -0.53209}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1653436511
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16277,3 +16326,4 @@ SceneRoots:
   - {fileID: 1515812027}
   - {fileID: 916504752}
   - {fileID: 1625520748}
+  - {fileID: 1651123489}
