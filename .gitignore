@@ -74,3 +74,11 @@ crashlytics-build.properties
 # ETC
 .DS_Store
 cardboardfirstscene_BackUpThisFolder_ButDontShipItWithYourGame/
+
+# LARGE ASSET PACKS - Store externally (OneDrive/Google Drive)
+Assets/BK_AlchemistHouse/
+Assets/BK_AlchemistHouse.meta
+
+# Photon Unity Networking (can be re-imported from Asset Store)
+Assets/Photon/
+Assets/Photon.meta
