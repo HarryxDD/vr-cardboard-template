@@ -216,7 +216,13 @@ public class RayEmitter : MonoBehaviour
                 pointsBuffer.Add(hit.point);
 
                 // Check if we hit a lens - LENS PROVIDES PROPERTIES!
+                // Check both on the collider itself and its children
                 LensProperties lens = hit.collider.GetComponent<LensProperties>();
+                if (lens == null)
+                {
+                    lens = hit.collider.GetComponentInChildren<LensProperties>();
+                }
+                
                 if (lens != null)
                 {
                     // Get refractive index from the lens, apply chromatic offset if enabled

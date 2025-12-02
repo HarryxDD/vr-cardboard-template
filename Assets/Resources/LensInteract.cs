@@ -113,6 +113,9 @@ public class LensInteract : Interactive
     /// </summary>
     void UpdateRays()
     {
+        // Ensure physics world reflects latest lens transform before raycasts
+        Physics.SyncTransforms();
+
         RayEmitter[] emitters = FindObjectsByType<RayEmitter>(FindObjectsSortMode.None);
         foreach (var emitter in emitters)
         {

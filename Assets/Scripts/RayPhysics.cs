@@ -61,7 +61,20 @@ public static class RayPhysics
         }
 
         // FIRST REFRACTION: Ray enters lens (air → glass)
-        Vector3 entryNormal = GetSurfaceNormal(entryPoint, rayDirection, lensCollider);
+        Vector3 entryNormal;
+        
+        // For sphere colliders, calculate normal geometrically for consistency
+        if (lensCollider is SphereCollider sphereCollider)
+        {
+            Vector3 center = lensCollider.transform.position;
+            entryNormal = (entryPoint - center).normalized;
+        }
+        else
+        {
+            // For other colliders, use raycast
+            entryNormal = GetSurfaceNormal(entryPoint, rayDirection, lensCollider);
+        }
+        
         Vector3 refractedDirection = RefractRay(rayDirection, entryNormal, AIR_REFRACTIVE_INDEX, refractiveIndex);
 
         if (showDebug)
@@ -74,44 +87,95 @@ public static class RayPhysics
         rayDirection = refractedDirection;
         points.Add(rayOrigin);
 
-        // MARCH THROUGH LENS: Find exit point
-        // Larger step size for mobile performance (less accurate but faster)
-        float stepSize = 0.01f; // Changed from 0.005 to 0.01 (50% fewer iterations)
-        float maxTravelDistance = 1.0f;
-        float traveledDistance = stepSize;
-
+        // FIND LENS EXIT: Prefer analytic solution for sphere lenses
         Vector3 exitPoint = rayOrigin;
         Vector3 exitNormal = -entryNormal;
         bool foundExit = false;
 
-        while (traveledDistance < maxTravelDistance)
+        if (lensCollider is SphereCollider sphere)
         {
-            Vector3 testPoint = rayOrigin + rayDirection * traveledDistance;
-            Vector3 closestPoint = lensCollider.ClosestPoint(testPoint);
-            bool isInside = Vector3.Distance(testPoint, closestPoint) < 0.0001f;
+            // Analytic ray-sphere intersection from inside the sphere
+            // Sphere center and radius
+            Vector3 center = sphere.transform.position;
+            float radius = sphere.radius * Mathf.Max(
+                sphere.transform.lossyScale.x,
+                Mathf.Max(sphere.transform.lossyScale.y, sphere.transform.lossyScale.z)
+            );
 
-            if (!isInside) // Exited!
+            // Shift to sphere space
+            Vector3 p = rayOrigin - center;
+            Vector3 d = rayDirection.normalized;
+
+            // Solve |p + t d|^2 = r^2 -> t^2 + 2(p·d)t + (|p|^2 - r^2) = 0
+            float b = 2f * Vector3.Dot(p, d);
+             // c should be negative when inside sphere (|p| < r)
+            float c = p.sqrMagnitude - radius * radius;
+            float disc = b * b - 4f * c; // since a=1
+
+            if (disc >= 0f)
             {
-                exitPoint = closestPoint;
-                
-                // Calculate exit normal (points outward from lens surface)
-                // For sphere collider, this is from center to exit point
-                if (lensCollider is SphereCollider sphereCollider)
+                float tExit = (-b + Mathf.Sqrt(disc)) * 0.5f; // larger root: exiting forward
+                if (tExit > 0f)
                 {
-                    Vector3 center = lensCollider.transform.position;
-                    exitNormal = (exitPoint - center).normalized;
+                    exitPoint = rayOrigin + d * tExit;
+                    exitNormal = (exitPoint - center).normalized; // outward normal
+                    foundExit = true;
                 }
-                else
-                {
-                    // For other colliders, use difference method
-                    exitNormal = (testPoint - closestPoint).normalized;
-                }
-                
-                foundExit = true;
-                break;
             }
+        }
+        
+        if (!foundExit)
+        {
+            // Fallback for non-sphere (or degenerate cases): minimal marching with robust check
+            float stepSize = 0.01f;
+            float maxTravelDistance = 1.0f;
+            float traveledDistance = stepSize;
 
-            traveledDistance += stepSize;
+            while (traveledDistance < maxTravelDistance)
+            {
+                Vector3 testPoint = rayOrigin + rayDirection * traveledDistance;
+                Vector3 closestPoint = lensCollider.ClosestPoint(testPoint);
+                bool isInside = (testPoint - closestPoint).sqrMagnitude < 1e-6f; // relaxed tolerance
+
+                if (!isInside)
+                {
+                    exitPoint = closestPoint;
+
+                    // Compute outward normal
+                    if (lensCollider is SphereCollider)
+                    {
+                        Vector3 center = lensCollider.transform.position;
+                        exitNormal = (exitPoint - center).normalized;
+                    }
+                    else
+                    {
+                        // Try raycast from just outside back towards surface for accurate normal
+                        RaycastHit exitHit;
+                        Vector3 outsideStart = testPoint + (-rayDirection) * 0.02f;
+                        if (Physics.Raycast(outsideStart, rayDirection, out exitHit, 0.05f))
+                        {
+                            if (exitHit.collider == lensCollider)
+                            {
+                                exitPoint = exitHit.point;
+                                exitNormal = exitHit.normal;
+                            }
+                            else
+                            {
+                                exitNormal = (testPoint - closestPoint).normalized;
+                            }
+                        }
+                        else
+                        {
+                            exitNormal = (testPoint - closestPoint).normalized;
+                        }
+                    }
+
+                    foundExit = true;
+                    break;
+                }
+
+                traveledDistance += stepSize;
+            }
         }
 
         if (!foundExit)
@@ -127,8 +191,8 @@ public static class RayPhysics
         points.Add(exitPoint);
 
         // SECOND REFRACTION: Ray exits lens (glass → air)
-        Vector3 exitNormalForRefraction = -exitNormal; // Flip for RefractRay
-        Vector3 exitRefractedDirection = RefractRay(rayDirection, exitNormalForRefraction, refractiveIndex, AIR_REFRACTIVE_INDEX);
+        // exitNormal points outward; for Snell's law use inward normal (-exitNormal)
+        Vector3 exitRefractedDirection = RefractRay(rayDirection, -exitNormal, refractiveIndex, AIR_REFRACTIVE_INDEX);
 
         if (showDebug)
         {
@@ -136,7 +200,7 @@ public static class RayPhysics
         }
 
         // Return exit position and direction
-        Vector3 exitOrigin = exitPoint + exitRefractedDirection * 0.05f;
+        Vector3 exitOrigin = exitPoint + exitRefractedDirection * 0.001f;
         return (exitOrigin, exitRefractedDirection);
     }
 
