@@ -29,6 +29,10 @@ public class CameraInteract : MonoBehaviour
     int twistVisual = 0;
     bool rollReset = true;
 
+    [Header("Twist Cooldown")]
+    [SerializeField] float twistCooldown = 0.25f; // Minimum time between twist Interact triggers
+    float lastTwistTime = -999f;
+
     void Update()
     {
         RaycastHit hit;
@@ -98,14 +102,19 @@ public class CameraInteract : MonoBehaviour
             twistCrosshair.transform.GetChild(0).localRotation = Quaternion.Euler(crosshairEuler);
             if ((angdiff <= -45f || angdiff >= 45f) && rollReset && selected)
             {
-                // Set twist direction for LensInteract
-                // angdiff < 0 = twisted left (counterclockwise)
-                // angdiff > 0 = twisted right (clockwise)
-                LensInteract.lastTwistDirection = angdiff < 0 ? -1f : 1f;
-                
-                selected.SendMessage("Interact");
-                timer = 0;
-                rollReset = false;
+                // Time-based cooldown: ignore if too soon after last twist trigger
+                if (Time.time - lastTwistTime >= twistCooldown)
+                {
+                    // Set twist direction for LensInteract
+                    // angdiff < 0 = twisted left (counterclockwise)
+                    // angdiff > 0 = twisted right (clockwise)
+                    LensInteract.lastTwistDirection = angdiff < 0 ? -1f : 1f;
+
+                    selected.SendMessage("Interact");
+                    lastTwistTime = Time.time;
+                    timer = 0;
+                    rollReset = false;
+                }
             }
             if (angdiff > -30f && angdiff < 30f)
                 rollReset = true;
