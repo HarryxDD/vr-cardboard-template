@@ -34,6 +34,10 @@ public class RayEmitter : MonoBehaviour
     public bool updateEveryFrame = false; // Set to false for static scenes
     public float updateInterval = 0.1f; // Update 10 times per second instead of 60
     public int maxRayBounces = 4; // Reduce for better performance (minimum 2 for one lens)
+    [Tooltip("Process ray updates over multiple frames to avoid stalls")]
+    public bool asyncTracing = true;
+    [Tooltip("How many rays to process per frame when asyncTracing is enabled")]
+    public int raysPerFrame = 3;
 
     private List<LineRenderer> rayRenderers = new List<LineRenderer>();
     private List<RayData> rayDataList = new List<RayData>();
@@ -42,6 +46,7 @@ public class RayEmitter : MonoBehaviour
     private Vector3 lastPosition;
     private Quaternion lastRotation;
     private bool hasUpdatedOnce = false;
+    private Coroutine tracingCoroutine;
 
     private struct RayData
     {
@@ -77,7 +82,7 @@ public class RayEmitter : MonoBehaviour
 
         if (updateEveryFrame || positionChanged || rotationChanged || timeElapsed)
         {
-            TraceAllRays();
+            ScheduleUpdate();
             lastUpdateTime = Time.time;
             lastPosition = transform.position;
             lastRotation = transform.rotation;
@@ -189,6 +194,22 @@ public class RayEmitter : MonoBehaviour
         }
     }
 
+    System.Collections.IEnumerator TraceAllRaysAsync()
+    {
+        int processed = 0;
+        for (int i = 0; i < rayRenderers.Count; i++)
+        {
+            TraceRay(rayRenderers[i], rayDataList[i], i);
+            processed++;
+            if (asyncTracing && processed >= Mathf.Max(1, raysPerFrame))
+            {
+                processed = 0;
+                yield return null; // spread work across frames
+            }
+        }
+        tracingCoroutine = null;
+    }
+
     void TraceRay(LineRenderer lineRenderer, RayData rayData, int rayIndex)
     {
         // Reuse buffer instead of creating new List every frame (avoids garbage collection!)
@@ -268,7 +289,21 @@ public class RayEmitter : MonoBehaviour
     /// </summary>
     public void ForceUpdate()
     {
-        TraceAllRays();
+        ScheduleUpdate();
+    }
+
+    public void ScheduleUpdate()
+    {
+        if (!asyncTracing)
+        {
+            TraceAllRays();
+            return;
+        }
+        if (tracingCoroutine != null)
+        {
+            return; // already scheduled
+        }
+        tracingCoroutine = StartCoroutine(TraceAllRaysAsync());
     }
 
     void OnValidate()

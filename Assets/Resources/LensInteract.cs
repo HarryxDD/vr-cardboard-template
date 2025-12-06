@@ -14,6 +14,10 @@ public class LensInteract : Interactive
     // Static variable to store twist direction from CameraInteract
     public static float lastTwistDirection = 0f;
     
+    // Cached emitters to avoid expensive FindObjectsByType every move
+    private static RayEmitter[] cachedEmitters;
+    private static bool emittersCached = false;
+    
     private LensProperties lensProperties;
     private Collider lensCollider;
     
@@ -27,6 +31,31 @@ public class LensInteract : Interactive
         {
             Debug.LogError("LensInteract requires LensProperties component on " + gameObject.name + " or its children");
         }
+        
+        // Cache all emitters once at start
+        CacheEmitters();
+    }
+    
+    /// <summary>
+    /// Cache all RayEmitters in the scene to avoid expensive searches every move
+    /// </summary>
+    private static void CacheEmitters()
+    {
+        if (!emittersCached)
+        {
+            cachedEmitters = FindObjectsByType<RayEmitter>(FindObjectsSortMode.None);
+            emittersCached = true;
+            Debug.Log($"[LensInteract] Cached {cachedEmitters.Length} RayEmitters");
+        }
+    }
+    
+    /// <summary>
+    /// Manually refresh emitter cache (call if emitters are added/removed at runtime)
+    /// </summary>
+    public static void RefreshEmitterCache()
+    {
+        emittersCached = false;
+        CacheEmitters();
     }
     
     public new void Interact()
@@ -116,10 +145,18 @@ public class LensInteract : Interactive
         // Ensure physics world reflects latest lens transform before raycasts
         Physics.SyncTransforms();
 
-        RayEmitter[] emitters = FindObjectsByType<RayEmitter>(FindObjectsSortMode.None);
-        foreach (var emitter in emitters)
+        // Use cached emitters instead of expensive search
+        if (cachedEmitters == null || cachedEmitters.Length == 0)
         {
-            emitter.ForceUpdate();
+            CacheEmitters();
+        }
+        
+        foreach (var emitter in cachedEmitters)
+        {
+            if (emitter != null) // Safety check in case emitter was destroyed
+            {
+                emitter.ScheduleUpdate();
+            }
         }
     }
     
