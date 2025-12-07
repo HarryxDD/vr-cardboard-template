@@ -1,4 +1,5 @@
 using UnityEngine;
+using Photon.Pun;
 
 public class LensInteract : Interactive
 {
@@ -20,9 +21,13 @@ public class LensInteract : Interactive
     
     private LensProperties lensProperties;
     private Collider lensCollider;
+
+    private PhotonView photonView;
     
     void Start()
     {
+        photonView = GetComponent<PhotonView>();
+
         // Get components from this lens object or its children
         lensProperties = GetComponentInChildren<LensProperties>();
         lensCollider = GetComponent<Collider>();
@@ -63,8 +68,23 @@ public class LensInteract : Interactive
         // Read direction from static variable set by CameraInteract
         // Invert it because CameraInteract's angdiff direction is opposite to what we want
         float direction = -lastTwistDirection;
-        
-        MoveLens(direction * moveStepSize);
+        float moveAmount = direction * moveStepSize;
+
+        // Always move locally first
+        MoveLens(moveAmount);
+
+        // If we have a PhotonView, broadcast movement so ALL clients also move
+        if (photonView != null)
+        {
+            photonView.RPC(nameof(RPC_MoveLensAndUpdateRays), RpcTarget.OthersBuffered, moveAmount);
+        }
+    }
+
+    [PunRPC]
+    void RPC_MoveLensAndUpdateRays(float moveAmount)
+    {
+        MoveLens(moveAmount);
+        UpdateRays();
     }
     
 
