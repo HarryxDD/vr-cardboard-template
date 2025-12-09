@@ -4787,7 +4787,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8131e3e74b2c4104a8cdf4c18afabdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardboardTeleport
-  interactModeOverride: 2
+  interactModeOverride: 0
   twistMultiplierOverride: 0
   dwellTimerOverride: 0
   playerRoot: {fileID: 1515812027}
@@ -7098,6 +7098,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CameraInteract
       objectReference: {fileID: 0}
+    - target: {fileID: 2743027098944091451, guid: cbedd542f0f5eec47aa08311f42b5009, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3bfe085cf7957b04582ccfadff0a4e97, type: 2}
     - target: {fileID: 2761659615475250749, guid: cbedd542f0f5eec47aa08311f42b5009, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -10980,7 +10984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8131e3e74b2c4104a8cdf4c18afabdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardboardTeleport
-  interactModeOverride: 2
+  interactModeOverride: 0
   twistMultiplierOverride: 0
   dwellTimerOverride: 0
   playerRoot: {fileID: 1515812027}
@@ -11020,7 +11024,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 1249426586}
   sceneViewId: 7
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -14943,7 +14948,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8131e3e74b2c4104a8cdf4c18afabdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardboardTeleport
-  interactModeOverride: 2
+  interactModeOverride: 0
   twistMultiplierOverride: 0
   dwellTimerOverride: 0
   playerRoot: {fileID: 1515812027}
@@ -16208,7 +16213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8131e3e74b2c4104a8cdf4c18afabdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardboardTeleport
-  interactModeOverride: 2
+  interactModeOverride: 0
   twistMultiplierOverride: 0
   dwellTimerOverride: 0
   playerRoot: {fileID: 1515812027}
@@ -17401,7 +17406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8131e3e74b2c4104a8cdf4c18afabdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardboardTeleport
-  interactModeOverride: 2
+  interactModeOverride: 0
   twistMultiplierOverride: 0
   dwellTimerOverride: 0
   playerRoot: {fileID: 1515812027}
@@ -17634,7 +17639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8131e3e74b2c4104a8cdf4c18afabdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardboardTeleport
-  interactModeOverride: 2
+  interactModeOverride: 0
   twistMultiplierOverride: 0
   dwellTimerOverride: 0
   playerRoot: {fileID: 1515812027}
@@ -18731,7 +18736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8131e3e74b2c4104a8cdf4c18afabdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardboardTeleport
-  interactModeOverride: 2
+  interactModeOverride: 0
   twistMultiplierOverride: 0
   dwellTimerOverride: 0
   playerRoot: {fileID: 1515812027}
@@ -18798,7 +18803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8131e3e74b2c4104a8cdf4c18afabdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardboardTeleport
-  interactModeOverride: 2
+  interactModeOverride: 0
   twistMultiplierOverride: 0
   dwellTimerOverride: 0
   playerRoot: {fileID: 1515812027}
@@ -20157,7 +20162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8131e3e74b2c4104a8cdf4c18afabdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardboardTeleport
-  interactModeOverride: 2
+  interactModeOverride: 0
   twistMultiplierOverride: 0
   dwellTimerOverride: 0
   playerRoot: {fileID: 1515812027}
@@ -20197,7 +20202,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 2084522102}
   sceneViewId: 2
   InstantiationId: 0
   isRuntimeInstantiated: 0
