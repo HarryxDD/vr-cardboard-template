@@ -9,9 +9,13 @@ public class LessonFlowController : MonoBehaviour
     public GameObject chromaticPanel;
     public GameObject endPanel;
 
+    private MenuFlowController menuFlow;
+    private bool willConnectAfterLesson = false;
+
     void Start()
     {
-        SetActiveSafe(welcomePanel, true);
+        // Hide all panels at start - MenuFlowController will show them if needed
+        SetActiveSafe(welcomePanel, false);
         SetActiveSafe(refractionPanel, false);
         SetActiveSafe(sphericalPanel, false);
         SetActiveSafe(chromaticPanel, false);
@@ -50,6 +54,13 @@ public class LessonFlowController : MonoBehaviour
         SetActiveSafe(endPanel, true);
     }
 
+    public void StartLessonWithMultiplayerAfter(MenuFlowController menu)
+    {
+        menuFlow = menu;
+        willConnectAfterLesson = true;
+        RestartLesson();
+    }
+
     public void CancelLesson()
     {
         SetActiveSafe(welcomePanel, false);
@@ -57,6 +68,11 @@ public class LessonFlowController : MonoBehaviour
         SetActiveSafe(sphericalPanel, false);
         SetActiveSafe(chromaticPanel, false);
         SetActiveSafe(endPanel, false);
+
+        if (willConnectAfterLesson && menuFlow != null)
+        {
+            menuFlow.OnLessonComplete();
+        }
     }
 
     public void RestartLesson()
