@@ -18,7 +18,7 @@ public class NetBootstrap : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinOrCreateRoom("Room1", new RoomOptions { MaxPlayers = 3 }, null);
+        PhotonNetwork.JoinOrCreateRoom("Room1", new RoomOptions { MaxPlayers = 20 }, null);
     }
 
 
