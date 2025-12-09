@@ -1,12 +1,13 @@
 using Photon.Pun;
 using UnityEngine;
-
+using TMPro;
 public class HeadAvatarController : MonoBehaviourPun
 {
     public Material localMaterial;
     public Material remoteMaterial;
 
     Transform cam;
+    TextMeshPro playerLabel;
 
     void Awake()
     {
@@ -20,6 +21,13 @@ public class HeadAvatarController : MonoBehaviourPun
 
         // Only the owner drives this
         if (!photonView.IsMine) enabled = false;
+
+        playerLabel = GetComponentInChildren<TextMeshPro>();
+        if (playerLabel)
+        {
+            int index = photonView.Owner.ActorNumber;
+            playerLabel.text = "Player " + index;
+        }
     }
 
     void Start()
@@ -39,5 +47,21 @@ public class HeadAvatarController : MonoBehaviourPun
         // Copy *rotation only*. Position stays at the spawn (set by the rig in NetBootstrap)
         transform.rotation = cam.rotation;
         transform.position = cam.position;
+
+        Billboard();
+    }
+
+    void Billboard()
+    {
+        if (!cam) cam = Camera.main?.transform;
+        if (!cam) return;
+
+        if (playerLabel != null)
+        {
+            // Make the label face the camera
+            playerLabel.transform.LookAt(
+                playerLabel.transform.position + (playerLabel.transform.position - cam.position)
+            );
+        }
     }
 }

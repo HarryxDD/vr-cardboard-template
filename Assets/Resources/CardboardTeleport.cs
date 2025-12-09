@@ -29,8 +29,11 @@ public class CardboardTeleport : Interactive
 
         if (interactModeOverride == InteractMode.None)
         {
-            interactModeOverride = InteractMode.Twist;
+            interactModeOverride = InteractMode.Dwell;
         }
+
+        // override dwell time for this teleport object
+        dwellTimerOverride = 2f;
     }
 
     public new void Interact()
